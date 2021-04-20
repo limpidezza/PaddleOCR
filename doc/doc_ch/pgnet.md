@@ -26,10 +26,15 @@ PGNet算法细节详见[论文](https://www.aaai.org/AAAI21Papers/AAAI-2885.Wang
 ![](../imgs_results/e2e_res_img293_pgnet.png)
 ![](../imgs_results/e2e_res_img295_pgnet.png)
 ### 性能指标
-| |det_precision|det_recall|det_f_score|e2e_precision|e2e_recall|e2e_f_score|FPS (size=640)|下载|
+
+测试集：Total-Text
+
+测试环境: NVIDIA Tesla V100-SXM2-16GB
+
+|PGNetA|det_precision|det_recall|det_f_score|e2e_precision|e2e_recall|e2e_f_score|FPS|下载|
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|Paper|85.30|86.80|86.1|-|-|61.7|38.20|-|
-|Ours|87.03|82.48|84.69|61.71|58.43|60.03|62.61|[下载链接](https://paddleocr.bj.bcebos.com/dygraph_v2.0/pgnet/en_server_pgnetA.tar)|
+|Paper|85.30|86.80|86.1|-|-|61.7|38.20 (size=640)|-|
+|Ours|87.03|82.48|84.69|61.71|58.43|60.03|48.73 (size=768)|[下载链接](https://paddleocr.bj.bcebos.com/dygraph_v2.0/pgnet/en_server_pgnetA.tar)|
 
 *note：PaddleOCR里的PGNet实现针对预测速度做了优化，在精度下降可接受范围内，可以显著提升端对端预测速度*
 
@@ -89,9 +94,11 @@ total_text.txt标注文件格式如下，文件名和标注信息中间用"\t"�
 " 图像文件名                    json.dumps编码的图像标注信息"
 rgb/gt_0.png    [{"transcription": "EST", "points": [[1004.0,689.0],[1019.0,698.0],[1034.0,708.0],[1049.0,718.0],[1064.0,728.0],[1079.0,738.0],[1095.0,748.0],[1094.0,774.0],[1079.0,765.0],[1065.0,756.0],[1050.0,747.0],[1036.0,738.0],[1021.0,729.0],[1007.0,721.0]]}, {...}]
 ```
-json.dumps编码前的图像标注信息是包含多个字典的list，字典中的 `points` 表示文本框的四个点的坐标(x, y)，从左上角的点开始顺时针排列。
+json.dumps编码前的图像标注信息是包含多个字典的list，字典中的 `points` 表示文本框的十四个点的坐标(x, y)，从左上角的点开始顺时针排列。
 `transcription` 表示当前文本框的文字，**当其内容为“###”时，表示该文本框无效，在训练时会跳过。**
 如果您想在其他数据集上训练，可以按照上述形式构建标注文件。
+
+**注意：PGNet支持任意点的数据输入，如4点、8点等，但是需要保证均匀标注（上下对称，左右距离一致）。在Total-Text数据集上，我们使用了14点标注进行训练。**
 
 ### 启动训练
 
